@@ -10,9 +10,9 @@ tp -------- Tasa periódica
 tpi ------- Tasa periódica + IVA
 pp -------- Pago periódico
 ------------------------------------------------------ */
-const monto = 10000
-const plazo = 72
-const periodos = "quincenal"
+const monto = 12000
+const plazo = 12
+const periodos = "mensual"
 const ti = .8
 const iva = .16
 
@@ -53,7 +53,7 @@ function getPagoPeriodico(monto, plazo, tp) {
 }
 
 const tp = getTasaPeriodica(ti, periodos)
-const pp = getPagoPeriodico(monto, plazo, tp)
+let pp = getPagoPeriodico(monto, plazo, tp)
 
 /* ------------------ FECHAS -------------------------
 --------------------- OUTPUTS ------------------------
@@ -134,7 +134,7 @@ saldo -------- Nuevo Saldo
 ------------------------------------------------------ */
 
 const dias = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"]
-const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Setiembre", "Octubre", "Noviembre", "Diciembre"];
+const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
 
 /**
  * Traducir a español y formatear fecha
@@ -166,8 +166,10 @@ function printTabla(periodo, fecha, amortizacion, intereses, iva, cuota, saldo) 
 
 /**
  * Calcular valores de columna de tabla amortización
+ * @param  {float}  monto   saldo actual
+ * @param  {int}    plazo   número de pagos
  */
-function getTablaAmortizacion() {
+function getTablaAmortizacion(monto, plazo) {
     let amort = 0
     let intereses = 0
     let ivaPago = 0
@@ -192,8 +194,48 @@ function getTablaAmortizacion() {
     fExp = fecha
 }
 
-getTablaAmortizacion()
+getTablaAmortizacion(monto, plazo)
 
-console.log(formatearFecha(fAct))
-console.log(formatearFecha(fPago))
-console.log(formatearFecha(fExp))
+// console.log(formatearFecha(fAct))
+// console.log(formatearFecha(fPago))
+// console.log(formatearFecha(fExp))
+let totalActual = 10665.50 
+let saldoPendiente = 500
+let saldoFavor = 100
+let pagos = 2
+
+function pagar(cantidad) {
+    if (cantidad + saldoFavor >= saldoPendiente) {
+        cantidad += saldoFavor 
+        let dif = saldoPendiente - cantidad
+        saldoPendiente = dif
+        saldoFavor = dif
+
+        if (-1 * dif > 0) {
+            saldoPendiente = 0
+            saldoFavor = -1 * dif
+        }
+    } else {
+        saldoFavor += cantidad
+    }
+
+    console.log(`Saldo pendiente: ${saldoPendiente} \nSaldo a favor: ${saldoFavor}`)
+}
+
+function abonar(cantidad) {
+    if (saldoPendiente > 0) {
+        console.log("Antes de abonar a capital, debes pagar el saldo pendiente")
+        return 
+    }
+
+    saldoFavor += cantidad
+    totalActual -= saldoFavor // checar si pago todo o no
+
+    pp = getPagoPeriodico(totalActual, plazo - pagos, tp)
+    getTablaAmortizacion(totalActual, plazo - pagos)
+}
+
+abonar(500)
+pagar(600)
+abonar(2465.5)
+//
