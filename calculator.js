@@ -20,7 +20,7 @@ const iva = .16
  * Calcular tasa periódica de acuerdo a la periodicidad del préstamo
  * @param  {float}  tasa            tasa de interés anual
  * @param  {string} periodicidad    tipo de préstamo (semanal, quincenal, mensual)
- * @return {int}    tasa por periodo
+ * @return {int}    tasa por periodo, se divide tasa entre número de periodos por año
  * 
  * Notas
  * La tasa periódica se calcula con valores constantes
@@ -47,9 +47,9 @@ function getTasaPeriodica(tasa, periodicidad) {
  * @return {float}  pago periódico redondeado a dos decimales
  */
 function getPagoPeriodico(monto, plazo, tp) {
-    const tpi = tp * (1 + iva)
+    const tpi = tp * (1 + iva) // Calular tasa de interés + IVA
     const pago = (monto * (tpi) * (Math.pow(1 + tpi, plazo))) / (Math.pow(1 + tpi, plazo) - 1)
-    return parseFloat(pago.toFixed(2))
+    return parseFloat(pago.toFixed(2)) // Redondear pago a dos decimales y convertir a float
 }
 
 const tp = getTasaPeriodica(ti, periodos)
@@ -70,7 +70,7 @@ let fExp
  * @return {Date}  fecha actual
  */
 function activarCredito() {
-    return new Date()
+    return new Date() // Regresar fecha actual
 }
 
 /**
@@ -81,16 +81,16 @@ function activarCredito() {
  */
 function getFechaPago(fAct, periodicidad) {
     fecha = new Date(fAct)
-    const dia = fecha.getDate()
+    const dia = fecha.getDate() // Día del mes
 
     switch (periodicidad) {
         case "semanal":
-            const diaNum = fecha.getDay()
+            const diaNum = fecha.getDay() // Número del día de la semana (0-domingo al 6-sábado)
 
-            if (diaNum >= 0 && diaNum <= 3) {
-                fecha.setDate(dia + (6 - diaNum))
-            } else {
-                fecha.setDate(dia + (13 - diaNum))
+            if (diaNum >= 0 && diaNum <= 3) { // De Domingo a Miércoles
+                fecha.setDate(dia + (6 - diaNum)) // Sábado de esa misma semana
+            } else { // De Jueves a Sábado
+                fecha.setDate(dia + (13 - diaNum)) // Sábado de la siguiente semana
             }
 
             break
@@ -99,10 +99,10 @@ function getFechaPago(fAct, periodicidad) {
                 fecha.setDate(15);
             } else if (dia >= 8 && dia <= 23) {
                 fecha.setDate(1);
-                fecha.setMonth(fecha.getMonth() + 1);
+                fecha.setMonth(fecha.getMonth() + 1); // 1ero del siguiente mes
             } else {
                 fecha.setDate(15);
-                fecha.setMonth(fecha.getMonth() + 1);
+                fecha.setMonth(fecha.getMonth() + 1); // 15 del siguiente mes
             }
             break
         case "mensual":
@@ -133,7 +133,7 @@ cuota, pp ---- Pago periódico
 saldo -------- Nuevo Saldo
 ------------------------------------------------------ */
 
-const dias = ["Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado"]
+const dias = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"]
 const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Setiembre", "Octubre", "Noviembre", "Diciembre"];
 
 /**
