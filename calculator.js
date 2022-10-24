@@ -1,4 +1,4 @@
-/* ----------- CALCULO DE PAGO PERIODICO -------------
+/* ----------- CÁLCULO DE PAGO PERIÓDICO -------------
 --------------------- INPUTS -------------------------
 monto ----- Monto original
 plazo ----- Plazo
@@ -6,8 +6,8 @@ periodos -- Periodicidad (semanal, quincenal, mensual)
 ti -------- Tasa de interés
 iva ------- IVA
 
-tp -------- Tasa periodica
-tpi ------- Tasa periodica + IVA
+tp -------- Tasa periódica
+tpi ------- Tasa periódica + IVA
 pp -------- Pago periódico
 ------------------------------------------------------ */
 const monto = 10000
@@ -16,8 +16,16 @@ const periodos = "quincenal"
 const ti = .8
 const iva = .16
 
-// La tasa periodica se calcula con valores constantes
-// No depende del numero de plazos, depende de tipo de periodicidad
+/**
+ * Calcular tasa periódica de acuerdo a la periodicidad del préstamo
+ * @param  {float}  tasa            tasa de interés anual
+ * @param  {string} periodicidad    tipo de préstamo (semanal, quincenal, mensual)
+ * @return {int}    tasa por periodo
+ * 
+ * Notas
+ * La tasa periódica se calcula con valores constantes
+ * depende del número de plazos, depende de tipo de periodicidad
+ */
 function getTasaPeriodica(tasa, periodicidad) {
     switch (periodicidad) {
         case "semanal":
@@ -31,6 +39,13 @@ function getTasaPeriodica(tasa, periodicidad) {
     }
 }
 
+/**
+ * Calcular pago por periodos
+ * @param  {int}    monto   cantidad de préstamo
+ * @param  {int}    plazo   número de pagos
+ * @param  {float}  tp      tasa por periodo
+ * @return {float}  pago periódico redondeado a dos decimales
+ */
 function getPagoPeriodico(monto, plazo, tp) {
     const tpi = tp * (1 + iva)
     const pago = (monto * (tpi) * (Math.pow(1 + tpi, plazo))) / (Math.pow(1 + tpi, plazo) - 1)
@@ -42,18 +57,28 @@ const pp = getPagoPeriodico(monto, plazo, tp)
 
 /* ------------------ FECHAS -------------------------
 --------------------- OUTPUTS ------------------------
-fAct ------ Fecha activacion (disposicion)
+fAct ------ Fecha activación (disposición)
 fPago ----- Fecha primer pago
-fExp ------ Fecha de expiracion
+fExp ------ Fecha de expiración
 ------------------------------------------------------ */
 let fAct
 let fPago
 let fExp
 
+/**
+ * Obtener fecha de activación al activar el préstamo
+ * @return {Date}  fecha actual
+ */
 function activarCredito() {
     return new Date()
 }
 
+/**
+ * Calcular fecha del siguiente pago con base a una fecha actual
+ * @param  {Date}   fAct            fecha de activación (disposición)
+ * @param  {string} periodicidad    tipo de préstamo (semanal, quincenal, mensual)
+ * @return {Date}   fecha del siguiente pago
+ */
 function getFechaPago(fAct, periodicidad) {
     fecha = new Date(fAct)
     const dia = fecha.getDate()
@@ -97,24 +122,39 @@ function getFechaPago(fAct, periodicidad) {
 fAct = activarCredito()
 fPago = getFechaPago(fAct, periodos)
 
-/* -------------- TABLA AMORTIZACION -----------------
+/* -------------- TABLA AMORTIZACIÓN -----------------
 ---------------------- OUTPUTS -----------------------
 periodo ------ Periodo actual
 fecha -------- Fecha de pago
-amort -------- Amortizacion
+amort -------- Amortización
 intereses ---- Parte del pago que corresponde a Intereses
 iva pago ----- Parte del pago que corresponde a IVA
-cuota, pp ---- Pago periodico
+cuota, pp ---- Pago periódico
 saldo -------- Nuevo Saldo
 ------------------------------------------------------ */
 
 const dias = ["Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado"]
 const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Setiembre", "Octubre", "Noviembre", "Diciembre"];
 
+/**
+ * Traducir a español y formatear fecha
+ * @param  {Date}   fecha  fecha a agregar formato
+ * @return {string} string de fecha traducida a español
+ */
 function formatearFecha(fecha) {
     return `${dias[fecha.getDay()]}, ${fecha.getDate()} ${meses[fecha.getMonth()]} de ${fecha.getFullYear()}`
 }
 
+/**
+ * Imprimir fila de tabla de amortización
+ * @param  {int}    periodo         número de pago
+ * @param  {Date}   fecha           fecha de pago
+ * @param  {float}  amortizacion    parte de amortización
+ * @param  {float}  intereses       parte de intereses
+ * @param  {float}  iva             parte de iva
+ * @param  {float}  cuota           cuota periódica
+ * @param  {float}  saldo           saldo actual
+ */
 function printTabla(periodo, fecha, amortizacion, intereses, iva, cuota, saldo) {
     amortizacion = amortizacion.toFixed(2)
     intereses = intereses.toFixed(2)
@@ -124,6 +164,9 @@ function printTabla(periodo, fecha, amortizacion, intereses, iva, cuota, saldo) 
     console.log(`${periodo}  |  ${fecha}  |  ${amortizacion}  |  ${intereses}  |  ${iva}  |  ${cuota}  |  ${saldo}  `)
 }
 
+/**
+ * Calcular valores de columna de tabla amortización
+ */
 function getTablaAmortizacion() {
     let amort = 0
     let intereses = 0
